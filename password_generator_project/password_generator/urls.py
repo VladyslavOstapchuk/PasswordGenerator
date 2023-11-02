@@ -26,7 +26,8 @@ urlpatterns = [
     
     # path to the homepage
     # 
-    path('', views.home),
-    # test page
-    path('test/', views.test_page),
+    path('', views.home, name='home'),
+    # name is link to the page
+    path('password/', views.password,name='password'),
+    path('about/', views.about, name='about')
 ]

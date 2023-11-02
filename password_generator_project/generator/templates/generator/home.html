@@ -1,1 +1,34 @@
-<h1>This is a new home page</h1>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+<!--class is taken from Bootstrap-->
+<div class="container text-center">
+    <h1>Password generator</h1>
+    <!--value in form action is link to the page from password_generator/urls.py-->
+    <form action="{% url 'password' %}">
+        <!--password length options-->
+        <select name="length">
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <!--default option-->
+            <option value="12" selected="selected">12 </option>
+        </select> <label>chars length</label>
+        <!--allowed password characters-->
+        <br>
+        <input type="checkbox" name="uppercase">
+        <label>Uppercase</label>
+        <br>
+        <input type="checkbox" name="numbers">
+        <label>Numbers</label>
+        <br>
+        <input type="checkbox" name="special">
+        <label>Special characters</label>
+        <br>
+    
+        <!--button-->
+        <input type="submit" value="Generate Password" class="btn btn-primary">
+        <footer>
+            <a href="{% url 'about' %}" class="btn btn-warning">About</a>
+        </footer>
+    </form></div>
