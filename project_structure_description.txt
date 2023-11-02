@@ -1,0 +1,12 @@
+__pychache__ - compiled code
+init.py - some part of project settings
+settings.py - main project settings
+asgi.py and wsgi.py - used during project deployment
+db.sqlite3 - database
+urls.py - containes page all page addresses related to out webapplication
+
+Whole webapplication consists of applications. Every application is responsible for some part of functionality
+
+views.py - contains information about webapp views
+
+templates folders - are created manually and contain html code of webpages

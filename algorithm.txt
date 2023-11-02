@@ -1,0 +1,258 @@
+# Create a new project
+
+django-admin startproject <project_name>
+
+# Move whole project to own directory
+
+# Check if Django works correctly starting server
+
+python3 manage.py runserver
+
+# Create a new app
+
+python3 manage.py startapp <app_name>
+
+# Add a new app to INSTALLED_APPS variable in settings.py
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    '<app_name>',
+]
+
+# In <application_name/views.py> create a method for webpage render
+
+from django.shortcuts import render
+
+# Import library for HTTP responses
+from django.http import HttpResponse
+
+# Create your views here.
+def home(req):
+    # Must return HTTP
+    return HttpResponse('Hello there friend')
+
+# Add a new URL to webpage to webapplication adding path to urlpatterns in urls.py
+
+# import path to views from generator app
+from generator import views
+
+urlpatterns = [
+    # admin page which we won't use in this project
+    # path('admin/', admin.site.urls),
+    
+    # path to the homepage
+    # 
+    path('',views.home)
+]
+
+# The same way create another webpage
+
+# Create a render method in views.py
+
+def test_page(res):
+    return HttpResponse('Just a test page')
+
+# Add this method to urls.py
+
+urlpatterns = [
+    # admin page which we won't use in this project
+    # path('admin/', admin.site.urls),
+    
+    # path to the homepage
+    # 
+    path('', views.home),
+    # test page
+    path('test/', views.test_page),
+]
+
+# Test if page shows correctly typing in address line in your browser
+
+http://127.0.0.1:8000/test/
+
+# Use templates instead of plain text in render methods
+# Create templates folder in <project_name>/<application_name>/templates/<application_name>
+
+# Add there a file home.html and test_page.html with this code:
+
+home.html:
+<h1>This is a new home page</h1>
+
+test_page.html:
+<!--amount of spaces around a view variable is obligatory-->
+<h1>Test of {{ test_message }}</h1>
+
+# Change the render method
+
+from django.shortcuts import render
+from django.http import HttpResponse
+
+# Create your views here.
+
+# Must return a HTTP response
+def home(req):
+    # Plain text is not the best option
+    # return HttpResponse('Hello there friend')
+    return render(req,'generator/home.html')
+
+def test_page(req):
+    return render(req,'generator/test_page.html',{'test_message':'test'})
+
+# Process of rendering looks this way:
+
+# User makes a request 
+# -> link is checked in urls.py 
+# -> urls.py forwards request to the specific view methiod with path('<link>',views.<link_render_method>)
+# -> <link_render_method> sends variables to the template and retuns it to the user
+
+# Add file password.html to templates/generator. This will be password generator from
+
+<h1>Password generator</h1>
+<!--value in form action is link to the page from password_generator/urls.py-->
+<form action="{% url 'password' %}">
+    <!--pull down menu-->
+    <select name="length">
+        <option value="6">6 char long</option>
+        <option value="7">7 char long</option>
+        <option value="8">8 char long</option>
+        <option value="9">9 char long</option>
+        <option value="10">10 char long</option>
+    </select>
+    <!--button-->
+    <input type="submit" value="Generate Password">
+</form>
+
+# Change urls.py. Add link to the new page
+
+urlpatterns = [
+    # admin page which we won't use in this project
+    # path('admin/', admin.site.urls),
+    
+    # path to the homepage
+    # 
+    path('', views.home),
+    # name is link to the page
+    path('password/', views.password,name='password'), # <==
+]
+
+# Add render method for the new page to the views.py
+
+def password(req):
+    return render(req,'generator/password.html')
+
+# Modify password.html and home.html to add addtional generator parameters
+
+# home.html
+
+<h1>Password generator</h1>
+<!--value in form action is link to the page from password_generator/urls.py-->
+<form action="{% url 'password' %}">
+    <!--password length options-->
+    <select name="length">
+        <option value="8">8 char long</option>
+        <option value="9">9 char long</option>
+        <option value="10">10 char long</option>
+        <option value="11">11 char long</option>
+        <!--default option-->
+        <option value="12" selected="selected">12 char long</option>
+    </select>
+    <!--allowed password characters-->
+    <br>
+    <input type="checkbox" name="uppercase">
+    <label>Uppercase</label>
+    <br>
+    <input type="checkbox" name="numbers">
+    <label>Numbers</label>
+    <br>
+    <input type="checkbox" name="special">
+    <label>Special characters</label>
+    <br>
+
+    <!--button-->
+    <input type="submit" value="Generate Password">
+</form>
+
+# password.html
+
+<h1>Your password is:</h1>
+<!--password value is passed here from views.py render method as dictionary parameter-->
+<h2>{{ password }}</h2>
+
+# Add password generation algorithm to the views.py
+
+# Necessary for random password generation
+import random
+# All letters
+import string
+
+def password(req):
+    characters = list(string.ascii_lowercase)
+    result_password= ''
+    # Get password options from request
+    # 12 is default returned value
+    length = int(req.GET.get('length',12))
+    
+    # Check if uppercase option is checked
+    if req.GET.get('uppercase'):
+        characters.extend(list(string.ascii_uppercase))
+    
+    # Check if special characters option is checked
+    if req.GET.get('special'):
+        characters.extend(list('!@#$%^&**()_+|\\[];:.,/?`~{\}'))
+
+    # Check if special characters option is checked
+    if req.GET.get('numbers'):
+        characters.extend(list('1234567890'))    
+    
+
+    for x in range(length):
+        result_password+=random.choice(characters)
+
+    return render(req,'generator/password.html',{'password':result_password})
+
+# Create About page and add it to existing project structure
+
+# Add link to the Bootstrap. Add this line to the begining of all html files
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+# Apply Bootstrap classes to your web pages
+# Here is an example
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+<div class="container text-center">
+    <h1>Password generator</h1>
+    <!--value in form action is link to the page from password_generator/urls.py-->
+    <form action="{% url 'password' %}">
+        <!--password length options-->
+        <select name="length">
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <!--default option-->
+            <option value="12" selected="selected">12 </option>
+        </select> <label>chars length</label>
+        <!--allowed password characters-->
+        <br>
+        <input type="checkbox" name="uppercase">
+        <label>Uppercase</label>
+        <br>
+        <input type="checkbox" name="numbers">
+        <label>Numbers</label>
+        <br>
+        <input type="checkbox" name="special">
+        <label>Special characters</label>
+        <br>
+    
+        <!--button-->
+        <input type="submit" value="Generate Password" class="btn btn-primary">
+        <footer>
+            <a href="{% url 'about' %}" class="btn btn-warning">About</a>
+        </footer>
+    </form></div>
