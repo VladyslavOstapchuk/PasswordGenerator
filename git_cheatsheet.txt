@@ -1,0 +1,9 @@
+git init # initialize git repo
+git status # check repo status
+git add # add file to commit
+git commit -m # create commit
+git stash # revert last changes
+git log # list all commits
+git checkout <commit_hash> # return to commit with <commit_hash> id
+git remote add origin <url_to_repo> # add path to remote repo
+git push -u origin master # push to remote repo to the master branch
