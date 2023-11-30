@@ -1,2 +1,2 @@
 # PasswordGenerator
-SImple Django Project
+Simple password generator wrinten in Django
